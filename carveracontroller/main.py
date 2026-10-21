@@ -8514,6 +8514,12 @@ def main():
     # Make it global to be able to access it from native APIs
     global global_app
     global_app = MakeraApp()
+    # Optional FreeCAD inbox, disabled unless explicitly enabled.
+    # The bridge uploads/selects files but never starts CNC motion.
+    if os.environ.get("FREECAD_BRIDGE_ENABLED", "").strip().lower() in ("1", "true", "yes", "on"):
+        from .freecad_inbox_bridge import install as install_freecad_inbox_bridge
+        inbox = os.environ.get("FREECAD_BRIDGE_INBOX") or None
+        Clock.schedule_once(lambda _dt: install_freecad_inbox_bridge(global_app, inbox), 0)
     global_app.run()
 
 
